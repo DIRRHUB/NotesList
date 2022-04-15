@@ -71,10 +71,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             int hours = calendarNow.get(Calendar.HOUR_OF_DAY);
             int minutes = calendarNow.get(Calendar.MINUTE);
             viewHolder.date.setText(String.format("%02d", hours) + ":" + String.format("%02d", minutes));
-            Log.e("1111", String.valueOf(dayNow));
         } else {
             viewHolder.date.setText(dayNote + "." + String.format("%02d", monthNote) + "." + yearNote);
-            Log.e("22222", "222222");
         }
     }
 

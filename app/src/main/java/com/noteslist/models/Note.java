@@ -4,15 +4,15 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(tableName = "notes")
 public class Note {
     @ColumnInfo(name = "title")
     private String title;
     @ColumnInfo(name = "description")
     private String description;
     @ColumnInfo(name = "date")
-    private String date;
-    @PrimaryKey (autoGenerate=true)
+    private final String date;
+    @PrimaryKey (autoGenerate = true)
     private int id;
 
     public Note(String date) {
@@ -29,27 +29,23 @@ public class Note {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public String getTitle() {
+        return title;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public String getDate() {
-        return date;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public String getDate() {
+        return date;
     }
 }
