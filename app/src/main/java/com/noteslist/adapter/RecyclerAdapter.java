@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.noteslist.R;
@@ -24,6 +25,7 @@ import java.time.LocalTime;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -32,11 +34,12 @@ import java.util.Objects;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
     private final String PATTERN = "dd-MM-yyyy-kk-mm";
     private final Context context;
-    private final List<Note> noteList;
+    private OnItemClickListener listener;
 
-    public RecyclerAdapter(Context context, List<Note> noteList) {
+    private List<Note> notes = new ArrayList<>();
+
+    public RecyclerAdapter(Context context) {
         this.context = context;
-        this.noteList = noteList;
     }
 
     @NonNull
@@ -48,7 +51,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @SuppressLint({"SimpleDateFormat", "SetTextI18n", "DefaultLocale"})
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        Note note = noteList.get(position);
+        Note note = notes.get(position);
         viewHolder.title.setText(note.getTitle());
         viewHolder.description.setText(note.getDescription());
 
@@ -68,27 +71,47 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         int monthNow = calendarNow.get(Calendar.MONTH);
         int yearNow = calendarNow.get(Calendar.YEAR);
         if(dayNote==dayNow && monthNote==monthNow && yearNote==yearNow){
-            int hours = calendarNow.get(Calendar.HOUR_OF_DAY);
-            int minutes = calendarNow.get(Calendar.MINUTE);
+            int hours = calendar.get(Calendar.HOUR_OF_DAY);
+            int minutes = calendar.get(Calendar.MINUTE);
             viewHolder.date.setText(String.format("%02d", hours) + ":" + String.format("%02d", minutes));
         } else {
             viewHolder.date.setText(dayNote + "." + String.format("%02d", monthNote) + "." + yearNote);
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return this.noteList.size();
+    @SuppressLint("NotifyDataSetChanged")
+    public void setListContent(List<Note> notes) {
+        Collections.reverse(notes);
+        this.notes = notes;
+        notifyDataSetChanged();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public void setOnClickListener(OnItemClickListener listener){
+        this.listener = listener;
+    }
+
+    public Note getNoteAtPosition(int position){
+        return notes.get(position);
+    }
+
+    @Override
+    public int getItemCount() {
+        return notes.size();
+    }
+
+    protected class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView title, description, date;
 
-        public ViewHolder(@NonNull View itemView) {
+        private ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.title = itemView.findViewById(R.id.textTitle);
             this.description = itemView.findViewById(R.id.textDescription);
             this.date = itemView.findViewById(R.id.textDate);
+            itemView.setOnClickListener(view -> {
+                int pos = getAdapterPosition();
+                if (listener != null && pos!=RecyclerView.NO_POSITION)
+                    listener.onItemClick(notes.get(pos));
+            });
         }
     }
 }

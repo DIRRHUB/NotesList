@@ -5,10 +5,16 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,16 +22,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.noteslist.R;
+import com.noteslist.adapter.OnItemClickListener;
 import com.noteslist.adapter.RecyclerAdapter;
-import com.noteslist.database.room.NoteRoomDatabase;
 
-import com.noteslist.database.room.dao.NoteDao;
 import com.noteslist.databinding.FragmentListBinding;
 import com.noteslist.models.Note;
+import com.noteslist.models.NoteViewModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,32 +42,55 @@ import java.util.Objects;
 
 public class ListFragment extends Fragment {
     private final String PATTERN = "dd-MM-yyyy-kk-mm";
+    private final String ID = "id";
+    private final String TITLE = "title";
+    private final String DESCRIPTION = "description";
+    private final String DATE = "date";
     private FragmentListBinding binding;
-    private NoteDao noteDao;
-    private List<Note> noteList = new ArrayList<>();
+    private NoteViewModel noteViewModel;
     private RecyclerAdapter recyclerAdapter;
     private LinearLayoutManager layoutManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        NoteRoomDatabase db = Room.databaseBuilder(requireContext(), NoteRoomDatabase.class, "NoteDatabase")
-                .allowMainThreadQueries().build();
-        noteDao = db.getNoteDao();
-        noteList = noteDao.getAllNotes();
-        Collections.sort(noteList, comparatorList);
+        noteViewModel = new ViewModelProvider(requireActivity()).get(NoteViewModel.class);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentListBinding.inflate(getLayoutInflater());
         binding.floatingActionButton.setOnClickListener(listener);
+        getBundle();
         setAdapter();
+        noteViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> recyclerAdapter.setListContent(notes));
+        recyclerAdapter.setOnClickListener(note -> sendBundle(note));
+
         return binding.getRoot();
     }
 
+    private void sendBundle(Note note){
+        Bundle bundle = new Bundle();
+        bundle.putInt(ID, note.getId());
+        bundle.putString(TITLE, note.getTitle());
+        bundle.putString(DESCRIPTION, note.getDescription());
+        Navigation.findNavController(requireView()).navigate(R.id.updateNoteFragment, bundle);
+    }
+
+    private void getBundle(){
+        if(getArguments()!=null){
+            int id = getArguments().getInt(ID);
+            String title = getArguments().getString(TITLE);
+            String description = getArguments().getString(DESCRIPTION);
+            String date = getArguments().getString(DATE);
+            Note updatedNote = new Note(title, description, date);
+            updatedNote.setId(id);
+            noteViewModel.update(updatedNote);
+        }
+    }
+
     private void setAdapter() {
-        recyclerAdapter = new RecyclerAdapter(this.getContext(), noteList);
+        recyclerAdapter = new RecyclerAdapter(this.getContext());
         binding.recyclerView.setAdapter(recyclerAdapter);
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -73,13 +103,10 @@ public class ListFragment extends Fragment {
     private final View.OnClickListener listener = view -> {
         if(view.getId()==R.id.floating_action_button){
             Date dateNow = Calendar.getInstance().getTime();
-            Log.i("date", dateNow.toString());
             SimpleDateFormat sdf = new SimpleDateFormat(PATTERN);
-            Note note = new Note(sdf.format(dateNow));
-            noteList.add(0, note);
-            noteDao.insert(note);
+            Note note = new Note("Новая заметка", "", sdf.format(dateNow));
+            noteViewModel.insert(note);
             layoutManager.scrollToPosition(0);
-            recyclerAdapter.notifyItemInserted(0);
         }
     };
 
@@ -92,28 +119,8 @@ public class ListFragment extends Fragment {
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAdapterPosition();
-            noteDao.deleteById(noteList.get(position).getId());
-            noteList.remove(position);
+            noteViewModel.delete(recyclerAdapter.getNoteAtPosition(position));
             recyclerAdapter.notifyItemRemoved(position);
         }
-    };
-
-    @SuppressLint("SimpleDateFormat")
-    private final Comparator<Note> comparatorList = (Comparator<Note>) (n1, n2) -> {
-        SimpleDateFormat sdf = new SimpleDateFormat(PATTERN);
-        Calendar calendar1 = Calendar.getInstance();
-        Calendar calendar2 = Calendar.getInstance();
-        try {
-            calendar1.setTime(Objects.requireNonNull(sdf.parse(n1.getDate())));
-            calendar2.setTime(Objects.requireNonNull(sdf.parse(n2.getDate())));
-            if(calendar1.before(calendar2)){
-                return 1;
-            } else {
-                return -1;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return 0;
     };
 }

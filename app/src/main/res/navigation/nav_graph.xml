@@ -20,6 +20,10 @@
         android:id="@+id/updateNoteFragment"
         android:name="com.noteslist.fragments.UpdateNoteFragment"
         android:label="Update note"
-        tools:layout="@layout/fragment_update_note"/>
+        tools:layout="@layout/fragment_update_note">
+        <action
+            android:id="@+id/action_updateNoteFragment_to_listFragment"
+            app:destination="@id/listFragment" />
+    </fragment>
 
 </navigation>

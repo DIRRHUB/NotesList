@@ -2,22 +2,35 @@ package com.noteslist.models;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "notes")
+@Entity(tableName = "note_table")
 public class Note {
+    @PrimaryKey (autoGenerate = true)
+    private int id;
     @ColumnInfo(name = "title")
     private String title;
     @ColumnInfo(name = "description")
     private String description;
     @ColumnInfo(name = "date")
-    private final String date;
-    @PrimaryKey (autoGenerate = true)
-    private int id;
+    private String date;
 
-    public Note(String date) {
-        title = "Новая заметка";
-        description = "";
+    public Note(String title, String description, String date) {
+        this.title = title;
+        this.description = description;
+        this.date = date;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -29,16 +42,8 @@ public class Note {
         this.id = id;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getDescription() {
