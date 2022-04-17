@@ -54,11 +54,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             e.printStackTrace();
         }
         int dayNote = calendar.get(Calendar.DAY_OF_MONTH);
-        int monthNote = calendar.get(Calendar.MONTH);
+        int monthNote = calendar.get(Calendar.MONTH)+1;
         int yearNote = calendar.get(Calendar.YEAR);
 
         int dayNow = calendarNow.get(Calendar.DAY_OF_MONTH);
-        int monthNow = calendarNow.get(Calendar.MONTH);
+        int monthNow = calendarNow.get(Calendar.MONTH)+1;
         int yearNow = calendarNow.get(Calendar.YEAR);
         if(dayNote==dayNow && monthNote==monthNow && yearNote==yearNow){
             int hours = calendar.get(Calendar.HOUR_OF_DAY);
