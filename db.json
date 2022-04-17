@@ -1,10 +1,10 @@
 {
  "notes":[
   { "title":"Sasha", "description":"Good night", "date": "18-04-2022-00-30"},
-  { "title":"Note", "description":"🌙", "date": "23-06-2022-20-10"},
-  { "title":"Note2", "description":"🌷", "date": "14-11-2022-15-15"}
-  { "title":"Note3", "description":"🏵️", "date": "15-11-2022-15-15"}
-  { "title":"Note4", "description":"🌹", "date": "12-07-2022-15-15"}
-  { "title":"Note5", "description":"💮", "date": "14-11-2022-15-15"}
+  { "title":"Note", "description":"", "date": "23-06-2022-20-10"},
+  { "title":"Note2", "description":"", "date": "14-11-2022-15-15"}
+  { "title":"Note3", "description":"", "date": "15-11-2022-15-15"}
+  { "title":"Note4", "description":"", "date": "12-07-2022-15-15"}
+  { "title":"Note5", "description":"", "date": "14-11-2022-15-15"}
   ]
 }
