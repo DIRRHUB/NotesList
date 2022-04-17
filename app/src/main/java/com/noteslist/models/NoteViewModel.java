@@ -20,6 +20,14 @@ public class NoteViewModel extends AndroidViewModel {
         notes = repository.getNotes();
     }
 
+    public void doGetRequest(){
+        repository.doGetRequest();
+    }
+
+    public int getSize(){
+        return repository.getSize();
+    }
+
     public void insert(Note note) {
         repository.insert(note);
     }

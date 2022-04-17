@@ -36,9 +36,10 @@ android {
 }
 
 dependencies {
-    //room
+    // Room
     implementation "android.arch.persistence.room:runtime:1.1.1"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.gms:play-services-base:17.6.0'
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
 
     // ViewModel
@@ -50,6 +51,11 @@ dependencies {
     // Navigation
     implementation "androidx.navigation:navigation-fragment:2.4.2"
     implementation "androidx.navigation:navigation-ui:2.4.2"
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.7.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'

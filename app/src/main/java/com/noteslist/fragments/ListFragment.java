@@ -5,40 +5,26 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.noteslist.R;
-import com.noteslist.adapter.OnItemClickListener;
 import com.noteslist.adapter.RecyclerAdapter;
 
 import com.noteslist.databinding.FragmentListBinding;
 import com.noteslist.models.Note;
 import com.noteslist.models.NoteViewModel;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 
 public class ListFragment extends Fragment {
     private final String PATTERN = "dd-MM-yyyy-kk-mm";
@@ -63,9 +49,15 @@ public class ListFragment extends Fragment {
         binding.floatingActionButton.setOnClickListener(listener);
         getBundle();
         setAdapter();
-        noteViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> recyclerAdapter.setListContent(notes));
+        noteViewModel.getNotes().observe(getViewLifecycleOwner(), notes -> {
+            if(notes.isEmpty()){
+                binding.textData.setVisibility(View.VISIBLE);
+            } else {
+                binding.textData.setVisibility(View.GONE);
+            }
+            recyclerAdapter.setListContent(notes);
+        });
         recyclerAdapter.setOnClickListener(note -> sendBundle(note));
-
         return binding.getRoot();
     }
 

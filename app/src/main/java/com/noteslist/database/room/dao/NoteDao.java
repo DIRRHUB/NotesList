@@ -13,9 +13,11 @@ import java.util.List;
 
 @Dao
 public interface NoteDao {
-
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Note note);
+
+    @Query("SELECT * FROM note_table WHERE title LIKE :title AND description LIKE :description AND date LIKE :date")
+    Note getNote(String title, String description, String date);
 
     @Update
     void update(Note note);
@@ -25,4 +27,7 @@ public interface NoteDao {
 
     @Query("SELECT * FROM note_table")
     LiveData<List<Note>> getAllNotes();
+
+    @Query("SELECT COUNT(title) FROM note_table")
+    int getSize();
 }
