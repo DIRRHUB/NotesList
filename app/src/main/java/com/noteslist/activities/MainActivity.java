@@ -1,6 +1,8 @@
 package com.noteslist.activities;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.BroadcastReceiver;
@@ -8,23 +10,37 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.noteslist.R;
 import com.noteslist.databinding.ActivityMainBinding;
 import com.noteslist.models.NoteViewModel;
+import com.noteslist.utils.ConnectionLiveData;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private BroadcastReceiver networkReceiver;
+    private NoteViewModel noteViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        //TODO NetworkChangeReceiver
-        doGetRequest();
+        checkConnection();
+    }
+
+    private void checkConnection() {
+        ConnectionLiveData connectionLiveData = new ConnectionLiveData(getApplicationContext());
+        connectionLiveData.observe(this, connection -> {
+            if(connection.getIsConnected()){
+                doGetRequest();
+            } else {
+                binding.progressBarCircle.setVisibility(View.GONE);
+                Snackbar.make(binding.fragmentContainerView, R.string.no_connection, Snackbar.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void doGetRequest() {
-        NoteViewModel noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
+        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
         int size = noteViewModel.getSize();
         noteViewModel.doGetRequest();
 

@@ -11,8 +11,8 @@ import com.noteslist.database.NoteRepository;
 import java.util.List;
 
 public class NoteViewModel extends AndroidViewModel {
-    private NoteRepository repository;
-    private LiveData<List<Note>> notes;
+    private final NoteRepository repository;
+    private final LiveData<List<Note>> notes;
 
     public NoteViewModel(@NonNull Application application) {
         super(application);

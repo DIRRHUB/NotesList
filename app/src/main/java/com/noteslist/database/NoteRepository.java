@@ -19,9 +19,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class NoteRepository {
-    private NoteDao noteDao;
-    private LiveData<List<Note>> notes;
-    private int size;
+    private final NoteDao noteDao;
+    private final LiveData<List<Note>> notes;
+    private final int size;
     private Call<List<Note>> call;
 
     public NoteRepository (Application application) {
@@ -71,7 +71,7 @@ public class NoteRepository {
     }
 
     private static class CheckNoteAsyncTask extends AsyncTask<Note, Void, Void>{
-        private NoteDao noteDao;
+        private final NoteDao noteDao;
 
         private CheckNoteAsyncTask(NoteDao noteDao){
             this.noteDao = noteDao;
@@ -90,7 +90,7 @@ public class NoteRepository {
     }
 
     private static class InsertNoteAsyncTask extends AsyncTask<Note, Void, Void> {
-        private NoteDao noteDao;
+        private final NoteDao noteDao;
 
         private InsertNoteAsyncTask(NoteDao noteDao){
             this.noteDao = noteDao;
@@ -104,7 +104,7 @@ public class NoteRepository {
     }
 
     private static class UpdateNoteAsyncTask extends AsyncTask<Note, Void, Void> {
-        private NoteDao noteDao;
+        private final NoteDao noteDao;
 
         private UpdateNoteAsyncTask(NoteDao noteDao){
             this.noteDao = noteDao;
@@ -118,7 +118,7 @@ public class NoteRepository {
     }
 
     private static class DeleteNoteAsyncTask extends AsyncTask<Note, Void, Void> {
-        private NoteDao noteDao;
+        private final NoteDao noteDao;
 
         private DeleteNoteAsyncTask(NoteDao noteDao){
             this.noteDao = noteDao;
